@@ -1,0 +1,124 @@
+# Representando dados
+
+Capítulo 2 de Freund & Simon
+
+Dados de comprimentos das trutas pescadas em Delaware e das erupções do *Old Faithful*
+
+## Análise em `R`
+
+```{r}
+# Os dados de comprimentos das trutas estão em uma planilha armazenada no meu GitHub e podem ser lidos 
+# com uma rotina da biblioteca openxlsx
+dados = openxlsx::read.xlsx("https://github.com/jrfrega/SAOB10/blob/8c78783dc30515e2fb827c4abfd3e72a423192d0/trutas.xlsx?raw=true")[,1]
+#
+# Apresenta os dados como foram lidos
+dados
+#
+# Apresenta os dados ordenados
+sort(dados)
+#
+# Apresenta um histograma com uma curva normal superimposta a ele e armazena 
+# algumas características na variável h
+h = hist(dados, right = FALSE, breaks = seq(16, 24, 1), freq = TRUE, main = "Comprimento das Trutas de Delaware", xlab = "Comprimento em cm", ylab = "Frequência", col = "lightyellow", border = "gray"); curve(dnorm(x, mean(dados), sd(dados))*60, xlim = c(16, 24), add = TRUE, col = "steelblue")
+# 
+# Aqui ficam armazenados os limites das classes
+h$breaks
+#
+# Este é o número de limites (que é o número de classes + 1)
+(n = length(h$breaks))
+# Assim pode-se definir as classes com seus limites
+(classes = data.frame(de = h$breaks[1:(n-1)], ate = h$breaks[2:n]))
+# 
+# E pode-se agregar as frequências observadas
+(classes = cbind(classes, contagem = h$counts))
+#
+# Calcula a frequência relativa de cada classe
+freqrel = h$counts/sum(h$counts)
+#
+# Calcula e agrega a frequência relativa acumulada numa estrutura tipo data.frame
+df = data.frame(freqrel, freqtot = cumsum(freqrel))
+#
+# Exibe os primeiros valores da estrutura
+head(df, 10)
+#
+# Transforma os dados em uma série temporal com início em zero para 
+# rotular adequadamente o eixo x
+df = ts(df, start = 0)
+df
+#
+# Apresenta um gráfico da frequência relativa e da frequência acumulada
+color = c("red", "blue"); plot.ts(df, plot.type = "single", col = color, lwd = 1.5, xlab = "Classe", ylab = "freq %", axes = TRUE); grid(col = "lightgray", lty = 1); legend(x = 0, y = 1, legend = c("Absoluta", "Acumulada"), fill = c(color))
+#
+# Forma alternativa de desenhar o gráfico
+color = c("red", "blue"); plot(0:7, df[,2], type = "l", col = color[2], xlab = "Classe", lwd = 1.5, ylab = "freq %"); lines(0:7, df[,1], col = color[1], lwd = 1.5); grid(col = "lightgray", lty = 1); legend(x = 0, y = 1, legend = c("Absoluta", "Acumulada"), fill = c(color))
+```
+
+```{r}
+#
+# Gráfico de ramos e folhas
+stem(dados)
+```
+```{r}
+#
+# Dados de erupções do Old Faithful
+oldfaithful = c(81, 83, 94, 73, 78, 94, 73, 89, 112, 80, 
+                94, 89, 35, 80, 74, 91, 89, 83, 80, 82, 
+                91, 80, 83, 91, 89, 82, 118, 105, 64, 56, 
+                76, 69, 78, 42, 76, 82, 82, 60, 73, 69, 
+                91, 83, 67, 85, 60, 65, 69, 85, 65, 82, 
+                53, 83, 62, 107, 60, 85, 69, 92, 40, 71, 
+                82, 89, 76, 55, 98, 74, 89, 98, 69, 87, 
+                74, 98, 94, 82, 82, 80, 71, 73, 74, 80, 
+                60, 69, 78, 74, 64, 80, 83, 82, 65, 67, 
+                94, 73, 33, 87, 73, 85, 78, 73, 74, 83, 
+                83, 51, 67, 73, 87, 85, 98, 91, 73, 108)
+#
+# Histograma com curva normal superimposta
+hist(oldfaithful, freq = FALSE, col = "lightyellow")
+curve(dnorm(x, mean(oldfaithful), sd(oldfaithful)), xlim = c(30, 120), add = TRUE, col = "blue", lwd = 2)
+```
+
+## Análise em Python
+
+```{python}
+# Bibioteca do Python para leitura de dados no Excel
+import pandas as pd
+#
+# Biblioteca para desenhar o histograma
+import matplotlib.pyplot as plt
+#
+# Lendo os dados
+trutas = pd.read_excel("https://github.com/jrfrega/SAOB10/raw/8c78783dc30515e2fb827c4abfd3e72a423192d0/trutas.xlsx", engine="openpyxl")
+#
+# Transformando em dados linha
+trutas = trutas.to_numpy().transpose()
+#
+# Pegando o primeiro elemento bidimensional
+trutas[0]
+#
+# Desenhando o histograma
+h = plt.hist(x = trutas[0], bins=7, color = "#AFAF0080", align = "right")
+plt.grid(axis='both', alpha=0.75)
+plt.show()
+plt.close('all')
+
+oldfaithful = [ 81, 83, 94, 73, 78, 94, 73, 89, 112, 80, 
+                94, 89, 35, 80, 74, 91, 89, 83, 80, 82, 
+                91, 80, 83, 91, 89, 82, 118, 105, 64, 56, 
+                76, 69, 78, 42, 76, 82, 82, 60, 73, 69, 
+                91, 83, 67, 85, 60, 65, 69, 85, 65, 82, 
+                53, 83, 62, 107, 60, 85, 69, 92, 40, 71, 
+                82, 89, 76, 55, 98, 74, 89, 98, 69, 87, 
+                74, 98, 94, 82, 82, 80, 71, 73, 74, 80, 
+                60, 69, 78, 74, 64, 80, 83, 82, 65, 67, 
+                94, 73, 33, 87, 73, 85, 78, 73, 74, 83, 
+                83, 51, 67, 73, 87, 85, 98, 91, 73, 108 ]
+
+h = plt.hist(x = oldfaithful, bins=7, color = "#8080FF80", align = "right")
+plt.grid(axis='both', alpha=0.75)
+plt.show()
+plt.close('all')
+
+
+```
+

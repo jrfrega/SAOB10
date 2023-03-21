@@ -1,0 +1,53 @@
+---
+title: "SAOB10"
+author: "Prof. Frega"
+date: "`r Sys.Date()`"
+output: 
+  bookdown::gitbook:
+  bookdown::html_book:
+  github_document:
+    toc: true
+    toc_depth: 5
+    html_preview: true
+  html_document: 
+    toc: yes
+    theme: cerulean
+    number_sections: yes
+---
+<style>
+h1, h2, h3, h4 {
+  margin-bottom: 1em;
+  margin-top: 2em;
+}
+body {
+  font-size: 14pt;
+}
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+```
+
+# Introdução
+
+Este material é composto por algumas anotações de aula do Prof. Frega, referentes à disciplina Estatística Aplicada à Administração. Ele não se propõe a ser uma referência completa mas sim a ser um pequeno guia de estudos. 
+
+
+```{r, child="Cap1e2.Rmd"}
+
+```
+
